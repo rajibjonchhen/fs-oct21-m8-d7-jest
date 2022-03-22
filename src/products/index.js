@@ -7,6 +7,7 @@ productsRouter
         const products = await Product.find({});
         res.status(200).send(products);
     })
+    
     .post('/', async (req, res) => {
         try {
             const product = new Product(req.body)
