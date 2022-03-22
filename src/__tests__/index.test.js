@@ -63,6 +63,29 @@ describe("Testing the endpoints", () => {
         createdProductId = response.body[0]._id
     })
 
+    it("should test that the put /products endpoint returns the 204", async() => {
+        const response = await client.post("/products/:id")
+        expect(response.status).toBe(204)
+    })
+
+    it("should test that the put /products endpoint returns the 204", async() => {
+        const response = await client.post("/products/:id")
+        expect(response.status).toBe(404)
+    })
+
+    it("should test that the delete /products endpoint returns the 204", async() => {
+        const response = await client.post("/products/:id")
+        expect(response.status).toBe(204)
+    })
+
+    it("should test that the delete /products endpoint returns the 204", async() => {
+        const response = await client.post("/products/:id")
+        expect(response.status).toBe(404)
+    })
+
+
+
+
     afterAll(async () => {
         await mongoose.connection.dropDatabase()
         await mongoose.connection.close()
