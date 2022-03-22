@@ -31,6 +31,20 @@ productsRouter.get('/:id', async(req, res, next) => {
     }
     })
 
+    productsRouter.put('/:id', async(req, res, next) => {
+        try {
+            const product = await Product.findById(req.params.id)
+            if(product){
+                await Product.findByIdAndUpdate(req.params.id, req.body, {new:true})
+                res.status(204).send() 
+            } else {
+                res.status(404).send(`product with id ${req.params.id} not found`) 
+            }
+    } catch (error) {
+        
+    }
+    })
+
 productsRouter.delete('/:id', async(req, res, next) => {
     try {
         const product = await Product.findById(req.params.id)
@@ -40,8 +54,9 @@ productsRouter.delete('/:id', async(req, res, next) => {
         } else {
             res.status(404).send(`product with id ${req.params.id} not found`) 
         }
-} catch (error) {
-    
+    } catch (error) {
+        
+        res.status(500).send(`server error`) 
 }
 })
 
