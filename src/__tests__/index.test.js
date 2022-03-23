@@ -19,6 +19,10 @@ describe("Testing the testing environment", () => {
 
 describe("Testing the endpoints", () => {
 
+
+   const  productIdNotExist = "6239da827dfc14842ece5123"
+let productId
+
     beforeAll(async () => {
         console.log("Before all tests...")
         await mongoose.connect(process.env.MONGO_URL)
@@ -42,7 +46,7 @@ describe("Testing the endpoints", () => {
         console.log(response.data)
         expect(response.status).toBe(201)
         expect(response.body._id).toBeDefined()
-
+        productId = response.body._id
         console.log(response.body)
     })
 
@@ -55,25 +59,25 @@ describe("Testing the endpoints", () => {
         expect(response.status).toBe(400)
     })
 
+
     let createdProductId
     it("should test that the GET /products endpoint returns the product we just created", async () => {
         const response = await client.get("/products")
         console.log("get all products", response)
         expect(response.status).toBe(200)
-        // expect(response.body.length).toBe(1)
 
         createdProductId = response.body[0]._id
     })
 
     it("should test that the get /products/id endpoint returns the 201", async() => {
-        const response = await client.get("/products/6239e3da48319babb487ac1e")
-        console.log("response get products/6239e3da48319babb487ac1e",response)
+        const response = await client.get(`/products/${productId}`)
+        console.log("response get products/6239da827dfc14842ece6123",response.body)
         expect(response.status).toBe(201)
     })
 
     it("should test that the get /products/wrongId endpoint returns the 404", async() => {
-        const response = await client.get("/products/wrongId")
-        console.log("response get products/6239e3da48319babb487ac1e",response)
+        const response = await client.get(`/products/${productIdNotExist}`)
+        console.log("response get products/6239e82ce71ac97028120a21",response)
         expect(response.status).toBe(404)
     })
 
@@ -83,35 +87,34 @@ describe("Testing the endpoints", () => {
     }
 
     it("should test that the put /products endpoint returns the 204", async() => {
-        const response = await (await client.put("/products/6239e3da48319babb487ac1e")).send(updateProduct)
-        console.log("products/6239e3da48319babb487ac1e -", response)
+        const response = await client.put(`/products/${productId}`).send(updateProduct)
+        console.log("products/ -", productId, response)
         expect(response.status).toBe(204)
     })
     
     it("should test that the put /products/wrongId endpoint returns the 404", async() => {
-        const response = await (await client.put("/products/wrongId")).send(updateProduct)
+        const response = await client.put(`/products/${productIdNotExist}`).send(updateProduct)
         console.log("/products/wrongId -", response)
         expect(response.status).toBe(404)
     })
 
 
+    
+    
     it("should test that the delete /products endpoint returns the 204", async() => {
-        const response = await client.delete("/products/6239e3da48319babb487ac1e")
+        const response = await client.delete(`/products/${productId}`)
         expect(response.status).toBe(204)
     })
 
     it("should test that the delete /products/wrongId endpoint returns the 404", async() => {
-        const response = await client.delete("/products/3w45r45o556ngI4d")
+        const response = await client.delete(`/products/${productIdNotExist}`)
         expect(response.status).toBe(404)
     })
-
-
 
 
     afterAll(async () => {
         await mongoose.connection.dropDatabase()
         await mongoose.connection.close()
-
         console.log("Closed Mongo connection.")
     })
 
